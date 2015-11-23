@@ -1,14 +1,13 @@
 #!/usr/bin/python
 """
-Tidies a Delphi or C++Builder project file, making it easier to compare in a
-diff tool like Beyond Compare.
+Tidies a Delphi or C++Builder project file, making it easier to track in
+version control or compare in a diff tool like Beyond Compare.
 """
 
 from __future__ import print_function
 
 from xml.dom.minidom import parse, Text
 import sys
-import os
 import operator
 
 
@@ -53,7 +52,16 @@ def cmp_proj_item(a, b):
 def sort_project(proj):
     sort_child_nodes(proj, "PropertyGroup", {'key': operator.attrgetter('tagName')})
     sort_child_nodes(proj, "ItemGroup", {'cmp': cmp_proj_item})
-    sort_child_nodes(proj, "Deployment", {'key': lambda v: v.getAttribute('Name')})
+
+    # The Deployment node in newer versions of RAD Studio may have several
+    # types of children. For example:
+    #  - <ProjectRoot Name="$(PROJECTNAME)" Platform="Win32"/>
+    #  - <DeployFile Class="ProjectFile" Configuration="Debug" LocalName="Project1.res">
+    #  - <DeployClass Name="ProjectOutput" Required="true">
+    # To accommodate, we consider the tag name and several attributes.
+    sort_child_nodes(
+        proj, "Deployment",
+        {'key': lambda v: (v.tagName, v.getAttribute('Name'), v.getAttribute('Class'), v.getAttribute('LocalName'))})
 
     # Workaround for minidom bug; some attributes may be set to None instead
     # of the empty string, so writing them will fail.  May no longer apply
