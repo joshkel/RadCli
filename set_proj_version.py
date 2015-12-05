@@ -6,11 +6,10 @@ Tested on Windows and Linux.
 Includes the ability to automatically process all member projects if given a
 project group file.
 
-Currently treats file version and product version as the same.
-
 Also updates the copyright year (if a copyright year is present).
 
-Currently always sets the build number to 0.
+The current version has a couple of limitations: it always treats file version
+and product version as the same, and it always sets the build number to 0.
 
 For simplicity, and to avoid munging RAD Studio project files more than we
 have to, we process project files as text, not XML.
@@ -34,7 +33,8 @@ now = datetime.now()
 # Get and process the version number
 version = sys.argv[1]
 if not re.match('\d+\.\d+\.\d+$', version):
-    print("Bad version number %s.  Must be major.minor.release" % version, file=sys.stderr)
+    print("Bad version number %s" % version, file=sys.stderr)
+    print("Only major.minor.release format is currently supported." % version, file=sys.stderr)
     sys.exit(2)
 parts = dict(zip(['MajorVer', 'MinorVer', 'Release'], [int(n) for n in version.split('.')]))
 parts['Build'] = 0
