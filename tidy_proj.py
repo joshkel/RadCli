@@ -15,6 +15,7 @@ def sort_child_nodes(xml_document, tag, sort_params):
     for parent in xml_document.getElementsByTagName(tag):
         children = []
         indenter = None
+        last_indenter = None
         for child in parent.childNodes:
             if child.nodeType == child.TEXT_NODE:
                 indenter = indenter or child
@@ -26,7 +27,8 @@ def sort_child_nodes(xml_document, tag, sort_params):
         for child in sorted(children, **sort_params):
             parent.appendChild(indenter.cloneNode(True))
             parent.appendChild(child)
-        parent.appendChild(last_indenter.cloneNode(True))
+        if last_indenter:
+            parent.appendChild(last_indenter.cloneNode(True))
 
 
 def create_ordering_dict(iterable):
