@@ -82,10 +82,13 @@ def add_build_orders(proj):
         """Gets the numeric build order from a BuildOrder node."""
         return int(node.childNodes[0].wholeText)
 
+    def sanitize_filename(f):
+        return f.replace('--', '__')
+
     def build_order_before(build_order, current_build_order):
         while current_build_order > 0:
             if (current_build_order - 1) in build_order:
-                return build_order[current_build_order - 1]
+                return sanitize_filename(build_order[current_build_order - 1])
             current_build_order -= 1
         return None
 
