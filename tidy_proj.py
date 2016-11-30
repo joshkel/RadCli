@@ -122,6 +122,6 @@ if __name__ == '__main__':
     sort_project(proj)
     add_build_orders(proj)
 
-    print(proj.toxml())
+    print(proj.toxml('utf-8'))
 
 # vim: set ts=4 sw=4 et ai
